@@ -1,17 +1,56 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createStore } from "redux";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// How to update store
+const reducer = (state = 0, action) => {
+  switch (action.type) {
+    case "INC":
+      return state + 1;
+    case "DEC":
+      return state - 1;
+    case "RND":
+      return state * action.payload;
+    default:
+      return state;
+  }
+};
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Global store
+const store = createStore(reducer);
+
+// Action Creator
+const inc = () => {
+  return { type: "INC" };
+};
+
+const dec = () => {
+  return { type: "DEC" };
+};
+
+const rnd = () => {
+  const random = Math.floor(Math.random() * 10);
+  return { type: "RND", payload: random };
+};
+
+const update = () => {
+  document.querySelector("#counter").textContent = store.getState();
+};
+
+// On store update
+store.subscribe(update);
+
+document.querySelector("#inc").addEventListener("click", () => {
+  store.dispatch(inc()); // Update store
+});
+
+document.querySelector("#dec").addEventListener("click", () => {
+  store.dispatch(dec());
+});
+
+document.querySelector("#rnd").addEventListener("click", () => {
+  store.dispatch(rnd());
+});
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<React.StrictMode></React.StrictMode>);
