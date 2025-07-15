@@ -2,15 +2,26 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createStore } from "redux";
 
+const initialState = { value: 0 };
+
 // How to update store
-const reducer = (state = 0, action) => {
+const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "INC":
-      return state + 1;
+      return {
+        ...state,
+        value: state.value + 1,
+      };
     case "DEC":
-      return state - 1;
+      return {
+        ...state,
+        value: state.value - 1,
+      };
     case "RND":
-      return state * action.payload;
+      return {
+        ...state,
+        value: state.value * action.payload,
+      };
     default:
       return state;
   }
@@ -28,13 +39,12 @@ const dec = () => {
   return { type: "DEC" };
 };
 
-const rnd = () => {
-  const random = Math.floor(Math.random() * 10);
-  return { type: "RND", payload: random };
+const rnd = (value) => {
+  return { type: "RND", payload: value };
 };
 
 const update = () => {
-  document.querySelector("#counter").textContent = store.getState();
+  document.querySelector("#counter").textContent = store.getState().value;
 };
 
 // On store update
@@ -49,7 +59,7 @@ document.querySelector("#dec").addEventListener("click", () => {
 });
 
 document.querySelector("#rnd").addEventListener("click", () => {
-  store.dispatch(rnd());
+  store.dispatch(rnd(Math.floor(Math.random() * 10)));
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
