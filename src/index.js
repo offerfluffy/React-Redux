@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createStore } from "redux";
+import { createStore, bindActionCreators } from "redux";
+import * as actions from "./actions";
 
 const initialState = { value: 0 };
 
-// How to update store
+// Reducer function defines how state is updated based on action types
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "INC":
@@ -27,39 +28,40 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-// Global store
+// Create the global Redux store using the reducer
 const store = createStore(reducer);
-
-// Action Creator
-const inc = () => {
-  return { type: "INC" };
-};
-
-const dec = () => {
-  return { type: "DEC" };
-};
-
-const rnd = (value) => {
-  return { type: "RND", payload: value };
-};
 
 const update = () => {
   document.querySelector("#counter").textContent = store.getState().value;
 };
 
-// On store update
+// Subscribe to store updates to trigger re-render logic
 store.subscribe(update);
 
+// const bindActionCreator =
+//   (creator, dispatch) =>
+//   (...args) => {
+//     dispatch(creator(...args));
+//   };
+
+// const incDispatch = bindActionCreator(actions.inc, store.dispatch);
+// const decDispatch = bindActionCreator(actions.dec, store.dispatch);
+// const rndDispatch = bindActionCreator(actions.rnd, store.dispatch);
+
+// Bind all action creators to dispatch and return them as callable functions
+const { inc, dec, rnd } = bindActionCreators(actions, store.dispatch);
+
 document.querySelector("#inc").addEventListener("click", () => {
-  store.dispatch(inc()); // Update store
+  inc();
+  // Dispatch the action to the store, triggering reducer and state update
 });
 
 document.querySelector("#dec").addEventListener("click", () => {
-  store.dispatch(dec());
+  dec();
 });
 
 document.querySelector("#rnd").addEventListener("click", () => {
-  store.dispatch(rnd(Math.floor(Math.random() * 10)));
+  rnd(Math.floor(Math.random() * 10));
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
